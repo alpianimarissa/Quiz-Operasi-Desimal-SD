@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petualangan Desimal - Kuis Interaktif 40 Soal SD Kelas 4</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-yellow': '#FFD166',
+                        'brand-orange': '#FF9F1C',
+                        'brand-blue': '#4EA8DE',
+                        'brand-purple': '#7209B7',
+                        'brand-green': '#06D6A0',
+                        'brand-pink': '#F72585',
+                    },
+                    fontFamily: {
+                        heading: ['Fredoka', 'sans-serif'],
+                        body: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #F8FAFC;
+        }
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+        .pop-card {
+            transition: all 0.2s ease-in-out;
+        }
+        .pop-card:hover {
+            transform: translateY(-2px);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F1F5F9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between selection:bg-brand-yellow selection:text-slate-900">
+
+    <!-- HEADER / TOPBAR -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-orange to-brand-yellow flex items-center justify-center text-white shadow-md text-lg font-bold">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-bold text-slate-800 tracking-wide">Kuis Petualangan Desimal 🌟</h1>
+                    <p class="text-xs font-semibold text-slate-500">40 Soal Operasi Desimal SD Kelas 4</p>
+                </div>
+            </div>
+
+            <!-- Quick Stats & Nav Grid Button -->
+            <div class="flex items-center gap-2 md:gap-4">
+                <div class="flex items-center gap-2 bg-indigo-50 border border-indigo-200 px-3 py-1.5 rounded-xl text-xs font-extrabold text-indigo-900">
+                    <i class="fa-solid fa-check-double text-indigo-600"></i>
+                    <span id="header-progress">0/40 Soal</span>
+                </div>
+
+                <button onclick="openNavModal()" class="bg-brand-purple hover:bg-purple-800 text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-grip"></i>
+                    <span class="hidden md:inline">Peta Soal</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-4xl mx-auto w-full px-4 py-6 flex-1">
+
+        <!-- SCORE BAR & PROGRESS CARD -->
+        <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="w-full sm:w-auto">
+                <div class="flex items-center justify-between gap-4 mb-1">
+                    <span class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Kemajuan Kuis</span>
+                    <span id="progress-percent" class="text-xs font-bold text-brand-purple">0% Selesai</span>
+                </div>
+                <!-- Progress Bar -->
+                <div class="w-full sm:w-64 bg-slate-100 h-3 rounded-full overflow-hidden border border-slate-200">
+                    <div id="progress-bar-fill" class="bg-gradient-to-r from-brand-blue via-brand-purple to-brand-pink h-full w-0 transition-all duration-300"></div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-100">
+                <div class="text-center px-3 border-r border-slate-200">
+                    <div class="text-[10px] uppercase font-bold text-slate-400">Skor</div>
+                    <div id="score-display" class="text-xl font-extrabold text-emerald-600">0</div>
+                </div>
+                <div class="text-center px-3 border-r border-slate-200">
+                    <div class="text-[10px] uppercase font-bold text-slate-400">Benar</div>
+                    <div id="correct-count" class="text-xl font-extrabold text-emerald-500">0</div>
+                </div>
+                <div class="text-center px-3">
+                    <div class="text-[10px] uppercase font-bold text-slate-400">Salah</div>
+                    <div id="wrong-count" class="text-xl font-extrabold text-red-500">0</div>
+                </div>
+                <button onclick="openConfirmModal()" title="Reset Progress" class="ml-2 text-slate-400 hover:text-red-500 text-sm p-2 rounded-xl hover:bg-red-50 transition">
+                    <i class="fa-solid fa-rotate-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- QUESTION CARD CONTAINER -->
+        <div id="question-card" class="bg-white rounded-3xl p-6 md:p-8 border border-slate-200 shadow-sm relative overflow-hidden min-h-[380px] flex flex-col justify-between">
+            <!-- Dynamic Content Injected via JS -->
+        </div>
+
+        <!-- NAVIGATION BOTTOM BUTTONS -->
+        <div class="flex items-center justify-between gap-3 mt-6">
+            <button id="btn-prev" onclick="navigateQuestion(-1)" class="bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold px-5 py-3 rounded-2xl shadow-sm transition flex items-center gap-2 text-sm disabled:opacity-40 disabled:cursor-not-allowed">
+                <i class="fa-solid fa-arrow-left"></i> Sebelumnya
+            </button>
+
+            <button onclick="openNavModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-3 rounded-2xl text-sm transition">
+                <i class="fa-solid fa-list-ol mr-1"></i> Soal <span id="nav-btn-current-num">1</span>/40
+            </button>
+
+            <button id="btn-next" onclick="navigateQuestion(1)" class="bg-brand-blue hover:bg-blue-600 text-white font-bold px-6 py-3 rounded-2xl shadow-sm transition flex items-center gap-2 text-sm disabled:opacity-40 disabled:cursor-not-allowed">
+                Selanjutnya <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 mt-8">
+        <div class="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <span><b>Petualangan Desimal</b> - Kuis Evaluasi SD Kelas 4</span>
+            <span class="text-slate-400"><i class="fa-solid fa-floppy-disk text-emerald-500 mr-1"></i> Kemajuan Tersimpan Otomatis</span>
+        </div>
+    </footer>
+
+    <!-- NAVIGATION GRID MODAL / PETA SOAL -->
+    <div id="nav-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-6 max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+                <div>
+                    <h3 class="text-xl font-bold font-heading text-slate-800">Peta Navigasi Soal 🎯</h3>
+                    <p class="text-xs text-slate-500">Pilih nomor soal untuk melompat langsung</p>
+                </div>
+                <button onclick="closeNavModal()" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full font-bold transition flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Legend Status -->
+            <div class="flex flex-wrap items-center gap-3 text-xs font-semibold mb-4 bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                <span class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded-md bg-slate-200 inline-block"></span> Belum diisi</span>
+                <span class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded-md bg-emerald-500 inline-block"></span> Benar</span>
+                <span class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded-md bg-red-500 inline-block"></span> Salah</span>
+                <span class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded-md border-2 border-brand-purple bg-purple-100 inline-block"></span> Soal Aktif</span>
+            </div>
+
+            <!-- Grid Numbers -->
+            <div id="modal-grid-container" class="grid grid-cols-5 sm:grid-cols-8 gap-2 overflow-y-auto p-1 flex-1">
+                <!-- 40 Buttons generated dynamically -->
+            </div>
+
+            <div class="border-t border-slate-100 pt-4 mt-4 flex items-center justify-between">
+                <button onclick="finishQuizSummary()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition">
+                    <i class="fa-solid fa-flag-checkered mr-1"></i> Selesai & Lihat Hasil
+                </button>
+                <button onclick="closeNavModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-5 py-2.5 rounded-xl text-xs transition">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FINAL RESULT SUMMARY MODAL -->
+    <div id="result-modal" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-6 md:p-8 max-w-lg w-full text-center shadow-2xl relative overflow-hidden">
+            <div class="text-6xl mb-2">🏆</div>
+            <h3 class="text-2xl md:text-3xl font-extrabold font-heading text-slate-800 mb-1">Hasil Evaluasi Kuis</h3>
+            <p class="text-xs text-slate-500 mb-6">Petualangan Operasi Desimal SD Kelas 4</p>
+
+            <div class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 rounded-2xl p-5 border border-indigo-100 mb-6">
+                <div class="text-xs uppercase font-extrabold tracking-wider text-indigo-600 mb-1">Skor Akhir Kamu</div>
+                <div id="final-score-val" class="text-5xl font-black text-brand-purple mb-2">0</div>
+                <p id="final-feedback-msg" class="text-sm font-semibold text-slate-700">Luar biasa!</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 text-center mb-6 text-xs font-bold">
+                <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-2xl text-emerald-800">
+                    <div class="text-emerald-600 text-[10px] uppercase">Benar</div>
+                    <div id="final-correct-val" class="text-xl font-black">0</div>
+                </div>
+                <div class="bg-red-50 border border-red-200 p-3 rounded-2xl text-red-800">
+                    <div class="text-red-600 text-[10px] uppercase">Salah</div>
+                    <div id="final-wrong-val" class="text-xl font-black">0</div>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center gap-3">
+                <button onclick="closeResultModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-2xl text-sm transition">
+                    Review Jawaban
+                </button>
+                <button onclick="confirmResetAction()" class="w-full bg-brand-yellow hover:bg-amber-400 text-slate-900 font-bold py-3 rounded-2xl text-sm transition">
+                    <i class="fa-solid fa-rotate-right mr-1"></i> Ulangi Kuis
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESET CONFIRMATION MODAL (No Alert/Confirm) -->
+    <div id="confirm-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl">
+            <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 text-xl font-bold flex items-center justify-center mx-auto mb-3">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800 mb-1">Mulai Ulang Kuis?</h3>
+            <p class="text-xs text-slate-500 mb-5">Semua jawaban dan skor yang tersimpan akan dihapus.</p>
+            <div class="flex items-center gap-3">
+                <button onclick="closeConfirmModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition">
+                    Batal
+                </button>
+                <button onclick="confirmResetAction()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2.5 rounded-xl text-xs transition">
+                    Ya, Reset
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // STORAGE KEY FOR PERSISTENCE (v4 for updated structured sequence & badges removal)
+        const STORAGE_KEY = 'petualangan_desimal_quiz_40_v4';
+
+        // 40 QUESTIONS DATA:
+        // - Questions 1 to 20: SOAL LANGSUNG (Berurutan: 1-5 Penjumlahan, 6-10 Pengurangan, 11-15 Perkalian, 16-20 Pembagian)
+        // - Questions 21 to 40: SOAL CERITA (Teracak +, -, *, / tanpa clue)
+        // - Perfect distribution of correct choices: 10 A, 10 B, 10 C, 10 D
+        const questionsData = [
+            // ==========================================
+            // BAGIAN 1: SOAL LANGSUNG (Nomor 1 - 20)
+            // ==========================================
+            // --- PENJUMLAHAN (Soal 1 - 5) ---
+            {
+                id: 1,
+                type: 'direct',
+                question: 'Hasil dari 3,75 + 4,6 adalah ...',
+                options: ['8,25', '8,15', '8,35', '7,35'],
+                correct: 2, // C
+                explanation: 'Luruskan tanda koma: 3,75 + 4,60 = 8,35.'
+            },
+            {
+                id: 2,
+                type: 'direct',
+                question: 'Hasil dari 12,8 + 5,42 adalah ...',
+                options: ['18,22', '17,22', '18,32', '18,12'],
+                correct: 0, // A
+                explanation: '12,80 + 5,42 = 18,22.'
+            },
+            {
+                id: 3,
+                type: 'direct',
+                question: 'Hasil penjumlahan 0,85 + 2,47 adalah ...',
+                options: ['3,22', '3,42', '3,32', '2,32'],
+                correct: 2, // C
+                explanation: '0,85 + 2,47 = 3,32.'
+            },
+            {
+                id: 4,
+                type: 'direct',
+                question: 'Hasil dari 6,9 + 8,35 adalah ...',
+                options: ['15,15', '15,25', '15,35', '14,25'],
+                correct: 1, // B
+                explanation: '6,90 + 8,35 = 15,25.'
+            },
+            {
+                id: 5,
+                type: 'direct',
+                question: 'Hasil dari 14,65 + 7,8 adalah ...',
+                options: ['22,35', '22,45', '21,45', '22,55'],
+                correct: 1, // B
+                explanation: '14,65 + 7,80 = 22,45.'
+            },
+
+            // --- PENGURANGAN (Soal 6 - 10) ---
+            {
+                id: 6,
+                type: 'direct',
+                question: 'Hasil dari 15,4 - 6,85 adalah ...',
+                options: ['8,45', '8,65', '9,55', '8,55'],
+                correct: 3, // D
+                explanation: 'Ubah 15,4 menjadi 15,40. Hasil pengurangan bersusun: 15,40 - 6,85 = 8,55.'
+            },
+            {
+                id: 7,
+                type: 'direct',
+                question: 'Hasil dari 9,2 - 4,38 adalah ...',
+                options: ['4,82', '4,92', '5,12', '4,72'],
+                correct: 0, // A
+                explanation: 'Ubah 9,2 menjadi 9,20. Hasil: 9,20 - 4,38 = 4,82.'
+            },
+            {
+                id: 8,
+                type: 'direct',
+                question: 'Hasil dari 18,5 - 9,65 adalah ...',
+                options: ['8,75', '8,85', '8,95', '9,85'],
+                correct: 1, // B
+                explanation: '18,50 - 9,65 = 8,85.'
+            },
+            {
+                id: 9,
+                type: 'direct',
+                question: 'Hasil dari 7,1 - 3,45 adalah ...',
+                options: ['3,65', '3,75', '3,55', '4,65'],
+                correct: 0, // A
+                explanation: '7,10 - 3,45 = 3,65.'
+            },
+            {
+                id: 10,
+                type: 'direct',
+                question: 'Hasil dari 11,05 - 5,6 adalah ...',
+                options: ['5,35', '5,55', '5,45', '6,45'],
+                correct: 2, // C
+                explanation: '11,05 - 5,60 = 5,45.'
+            },
+
+            // --- PERKALIAN (Soal 11 - 15) ---
+            {
+                id: 11,
+                type: 'direct',
+                question: 'Hasil perkalian dari 2,4 × 5 adalah ...',
+                options: ['11,0', '12,0', '10,5', '12,5'],
+                correct: 1, // B
+                explanation: 'Hitung 24 × 5 = 120. Karena ada 1 angka di belakang koma, hasilnya 12,0.'
+            },
+            {
+                id: 12,
+                type: 'direct',
+                question: 'Hasil dari 0,7 × 0,9 adalah ...',
+                options: ['6,3', '0,063', '0,63', '63,0'],
+                correct: 2, // C
+                explanation: 'Hitung 7 × 9 = 63. Total ada 2 digit di belakang koma, jadi 0,63.'
+            },
+            {
+                id: 13,
+                type: 'direct',
+                question: 'Hasil perkalian dari 3,15 × 4 adalah ...',
+                options: ['12,4', '12,8', '13,2', '12,6'],
+                correct: 3, // D
+                explanation: 'Hitung 315 × 4 = 1260. Karena ada 2 digit desimal, maka 12,60 = 12,6.'
+            },
+            {
+                id: 14,
+                type: 'direct',
+                question: 'Hasil dari 0,25 × 0,8 adalah ...',
+                options: ['0,02', '2,0', '0,12', '0,2'],
+                correct: 3, // D
+                explanation: '25 × 8 = 200. Total ada 3 digit desimal: 0,200 = 0,2.'
+            },
+            {
+                id: 15,
+                type: 'direct',
+                question: 'Hasil dari 5,2 × 0,3 adalah ...',
+                options: ['1,56', '15,6', '0,156', '1,66'],
+                correct: 0, // A
+                explanation: '52 × 3 = 156. Total ada 2 angka desimal: 1,56.'
+            },
+
+            // --- PEMBAGIAN (Soal 16 - 20) ---
+            {
+                id: 16,
+                type: 'direct',
+                question: 'Hasil dari 6,4 ÷ 0,8 adalah ...',
+                options: ['8', '0,8', '80', '0,08'],
+                correct: 0, // A
+                explanation: 'Kalikan kedua angka dengan 10 agar menjadi bilangan bulat: 64 ÷ 8 = 8.'
+            },
+            {
+                id: 17,
+                type: 'direct',
+                question: 'Hasil pembagian 14,7 ÷ 3 adalah ...',
+                options: ['4,8', '4,9', '5,1', '4,7'],
+                correct: 1, // B
+                explanation: '14,7 ÷ 3 = 4,9. (147 ÷ 3 = 49).'
+            },
+            {
+                id: 18,
+                type: 'direct',
+                question: 'Hasil dari 4,5 ÷ 0,9 adalah ...',
+                options: ['50', '0,5', '0,05', '5'],
+                correct: 3, // D
+                explanation: 'Kalikan kedua angka dengan 10: 45 ÷ 9 = 5.'
+            },
+            {
+                id: 19,
+                type: 'direct',
+                question: 'Hasil dari 16,8 ÷ 4 adalah ...',
+                options: ['4,4', '3,8', '4,2', '4,6'],
+                correct: 2, // C
+                explanation: '16,8 ÷ 4 = 4,2.'
+            },
+            {
+                id: 20,
+                type: 'direct',
+                question: 'Hasil dari 2,7 ÷ 0,3 adalah ...',
+                options: ['0,9', '90', '0,09', '9'],
+                correct: 3, // D
+                explanation: 'Kalikan kedua angka dengan 10: 27 ÷ 3 = 9.'
+            },
+
+            // ==========================================
+            // BAGIAN 2: SOAL CERITA (Nomor 21 - 40)
+            // ==========================================
+            {
+                id: 21,
+                type: 'story',
+                question: 'Ibu membeli kain sepanjang 8,5 meter. Kain tersebut digunakan untuk membuat baju adik sepanjang 3,25 meter. Berapa meter sisa kain Ibu?',
+                options: ['5,15 meter', '5,25 meter', '5,35 meter', '4,25 meter'],
+                correct: 1, // B
+                explanation: 'Sisa kain = 8,50 m - 3,25 m = 5,25 meter.'
+            },
+            {
+                id: 22,
+                type: 'story',
+                question: 'Setiap hari Budi menabung uang sebesar 3,5 ribu rupiah. Berapa ribu rupiah total uang yang berhasil ditabung Budi selama 6 hari?',
+                options: ['21,0 ribu', '18,5 ribu', '20,0 ribu', '22,5 ribu'],
+                correct: 0, // A
+                explanation: 'Total tabungan = 3,5 × 6 = 21,0 ribu rupiah.'
+            },
+            {
+                id: 23,
+                type: 'story',
+                question: 'Ani membeli 2,45 kg buah apel dan 3,8 kg buah jeruk di toko buah. Berapa kg total berat buah yang dibeli Ani?',
+                options: ['6,15 kg', '6,35 kg', '6,25 kg', '5,25 kg'],
+                correct: 2, // C
+                explanation: 'Total berat = 2,45 kg + 3,80 kg = 6,25 kg.'
+            },
+            {
+                id: 24,
+                type: 'story',
+                question: 'Pak Joko memiliki 8,4 kg gula pasir yang akan dimasukkan ke dalam 4 kantong plastik secara merata. Berapa kg gula pasir dalam setiap kantong?',
+                options: ['2,2 kg', '2,6 kg', '1,8 kg', '2,1 kg'],
+                correct: 3, // D
+                explanation: 'Gula per kantong = 8,4 ÷ 4 = 2,1 kg.'
+            },
+            {
+                id: 25,
+                type: 'story',
+                question: 'Sebuah ember penampung air berisi 12,5 liter air. Dini memakai 4,75 liter air untuk menyiram tanaman. Berapa liter sisa air di dalam ember?',
+                options: ['7,75 liter', '7,65 liter', '7,85 liter', '6,75 liter'],
+                correct: 0, // A
+                explanation: 'Sisa air = 12,50 - 4,75 = 7,75 liter.'
+            },
+            {
+                id: 26,
+                type: 'story',
+                question: 'Sebuah botol berisi 0,75 liter jus buah. Jika Santi membeli 8 botol jus yang sama, berapa liter total jus buah yang dibeli Santi?',
+                options: ['5,5 liter', '6,0 liter', '6,5 liter', '5,0 liter'],
+                correct: 1, // B
+                explanation: 'Total jus = 0,75 × 8 = 6,00 liter = 6,0 liter.'
+            },
+            {
+                id: 27,
+                type: 'story',
+                question: 'Ayah memotong tali sepanjang 9,6 meter menjadi beberapa bagian yang masing-masing panjangnya 1,2 meter. Berapa banyak potongan tali yang diperoleh Ayah?',
+                options: ['7 potongan', '9 potongan', '8 potongan', '6 potongan'],
+                correct: 2, // C
+                explanation: 'Banyak potongan = 9,6 ÷ 1,2 = 96 ÷ 12 = 8 potongan.'
+            },
+            {
+                id: 28,
+                type: 'story',
+                question: 'Roni berlari sejauh 1,85 km pada pagi hari dan 2,4 km pada sore hari. Berapa kilometer total jarak yang ditempuh Roni hari ini?',
+                options: ['4,15 km', '4,35 km', '3,25 km', '4,25 km'],
+                correct: 3, // D
+                explanation: 'Total jarak = 1,85 km + 2,40 km = 4,25 km.'
+            },
+            {
+                id: 29,
+                type: 'story',
+                question: 'Taman bunga berbentuk persegi panjang memiliki ukuran panjang 8,5 meter dan lebar 4 meter. Berapa meter persegi luas taman bunga tersebut?',
+                options: ['34,0 m²', '32,5 m²', '36,0 m²', '33,0 m²'],
+                correct: 0, // A
+                explanation: 'Luas taman = 8,5 × 4 = 34,0 m².'
+            },
+            {
+                id: 30,
+                type: 'story',
+                question: 'Ibu mempunyai 5,4 liter minyak goreng. Minyak tersebut akan dimasukkan ke dalam botol-botol kecil berukuran 0,6 liter. Berapa banyak botol kecil yang dibutuhkan Ibu?',
+                options: ['8 botol', '9 botol', '10 botol', '7 botol'],
+                correct: 1, // B
+                explanation: 'Banyak botol = 5,4 ÷ 0,6 = 54 ÷ 6 = 9 botol.'
+            },
+            {
+                id: 31,
+                type: 'story',
+                question: 'Paman memasukkan 4,85 liter bensin ke dalam motor pada hari Senin dan 3,6 liter pada hari Selasa. Berapa liter total bensin yang diisikan Paman?',
+                options: ['8,35 liter', '8,55 liter', '8,45 liter', '7,45 liter'],
+                correct: 2, // C
+                explanation: 'Total bensin = 4,85 + 3,60 = 8,45 liter.'
+            },
+            {
+                id: 32,
+                type: 'story',
+                question: 'Siska membawa uang sebesar 20,0 ribu rupiah. Ia membeli buku tulis seharga 14,25 ribu rupiah. Berapa ribu rupiah sisa uang kembalian Siska?',
+                options: ['6,15 ribu', '5,85 ribu', '6,25 ribu', '5,75 ribu'],
+                correct: 3, // D
+                explanation: 'Kembalian = 20,00 - 14,25 = 5,75 ribu rupiah.'
+            },
+            {
+                id: 33,
+                type: 'story',
+                question: 'Kebun paman menghasilkan 14,4 kg buah mangga yang dibagikan secara merata kepada 6 tetangganya. Berapa kg mangga yang diterima oleh setiap tetangga?',
+                options: ['2,4 kg', '2,2 kg', '2,6 kg', '2,8 kg'],
+                correct: 0, // A
+                explanation: 'Mangga per tetangga = 14,4 ÷ 6 = 2,4 kg.'
+            },
+            {
+                id: 34,
+                type: 'story',
+                question: 'Sebuah pita hias dijual seharga 4,5 ribu rupiah per meter. Berapa ribu rupiah harga yang harus dibayar Kiki jika ia membeli pita sepanjang 6 meter?',
+                options: ['26,0 ribu', '27,0 ribu', '25,5 ribu', '28,0 ribu'],
+                correct: 1, // B
+                explanation: 'Total harga = 4,5 × 6 = 27,0 ribu rupiah.'
+            },
+            {
+                id: 35,
+                type: 'story',
+                question: 'Pak Rudi memanen 18,2 kg kentang dari kebunnya. Sebanyak 9,65 kg kentang dijual ke pasar. Berapa kg sisa kentang Pak Rudi?',
+                options: ['8,45 kg', '8,65 kg', '8,55 kg', '9,55 kg'],
+                correct: 2, // C
+                explanation: 'Sisa kentang = 18,20 - 9,65 = 8,55 kg.'
+            },
+            {
+                id: 36,
+                type: 'story',
+                question: 'Kakak membeli dua keping papan kayu. Papan pertama tebalnya 1,75 cm dan papan kedua tebalnya 2,5 cm. Berapa cm total ketebalan kedua papan jika ditumpuk?',
+                options: ['4,15 cm', '4,35 cm', '3,25 cm', '4,25 cm'],
+                correct: 3, // D
+                explanation: 'Total ketebalan = 1,75 + 2,50 = 4,25 cm.'
+            },
+            {
+                id: 37,
+                type: 'story',
+                question: 'Setiap bungkus tepung terigu memiliki berat 0,45 kg. Jika Ibu membeli 6 bungkus tepung terigu, berapa kg berat total seluruh tepung terigu tersebut?',
+                options: ['2,7 kg', '2,5 kg', '2,9 kg', '2,4 kg'],
+                correct: 0, // A
+                explanation: 'Total berat = 0,45 × 6 = 2,70 = 2,7 kg.'
+            },
+            {
+                id: 38,
+                type: 'story',
+                question: 'Sebuah pita sepanjang 3,6 meter dipotong menjadi beberapa bagian sama panjang, masing-masing sepanjang 0,4 meter. Berapa banyak potongan pita yang dihasilkan?',
+                options: ['8 potongan', '9 potongan', '10 potongan', '7 potongan'],
+                correct: 1, // B
+                explanation: 'Banyak potongan = 3,6 ÷ 0,4 = 36 ÷ 4 = 9 potongan.'
+            },
+            {
+                id: 39,
+                type: 'story',
+                question: 'Panjang lintasan lari adalah 5,0 km. Deni telah berlari sejauh 3,15 km. Berapa km lagi sisa jarak yang harus ditempuh Deni hingga garis finis?',
+                options: ['1,75 km', '1,95 km', '1,85 km', '2,85 km'],
+                correct: 2, // C
+                explanation: 'Sisa jarak = 5,00 - 3,15 = 1,85 km.'
+            },
+            {
+                id: 40,
+                type: 'story',
+                question: 'Dalam resep kue, Ibu memerlukan 0,85 kg gula pasir dan 1,65 kg tepung terigu. Berapa kg total berat kedua bahan kue tersebut?',
+                options: ['2,4 kg', '2,6 kg', '2,3 kg', '2,5 kg'],
+                correct: 3, // D
+                explanation: 'Total berat bahan = 0,85 + 1,65 = 2,50 = 2,5 kg.'
+            }
+        ];
+
+        let quizState = {
+            currentIndex: 0,
+            answers: {}, // index: { selected: number, isCorrect: boolean }
+            isFinished: false
+        };
+
+        // LOAD FROM LOCAL STORAGE (Offline-Safe / Anti-Reload)
+        function loadSavedState() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed && typeof parsed.currentIndex === 'number' && parsed.answers) {
+                        quizState = parsed;
+                    }
+                }
+            } catch (e) {
+                console.warn('LocalStorage error, fallback to initial state:', e);
+            }
+        }
+
+        // SAVE TO LOCAL STORAGE
+        function saveState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(quizState));
+            } catch (e) {
+                console.warn('Unable to save state to LocalStorage:', e);
+            }
+        }
+
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                quizState.secondsElapsed++;
+                updateTimerDisplay();
+                saveState();
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(quizState.secondsElapsed / 60).toString().padStart(2, '0');
+            const secs = (quizState.secondsElapsed % 60).toString().padStart(2, '0');
+            const str = `${mins}:${secs}`;
+            const el = document.getElementById('timer-display');
+            if (el) el.textContent = str;
+            return str;
+        }
+
+        // CALCULATE STATS
+        function getQuizStats() {
+            let correct = 0;
+            let wrong = 0;
+            const totalAnswered = Object.keys(quizState.answers).length;
+
+            Object.values(quizState.answers).forEach(ans => {
+                if (ans.isCorrect) correct++;
+                else wrong++;
+            });
+
+            // Each question gives 2.5 points (40 * 2.5 = 100)
+            const score = Math.round(correct * 2.5);
+            return { correct, wrong, totalAnswered, score };
+        }
+
+        function updateHeaderUI() {
+            const { correct, wrong, totalAnswered, score } = getQuizStats();
+            
+            document.getElementById('header-progress').textContent = `${totalAnswered}/40 Soal`;
+            document.getElementById('score-display').textContent = score;
+            document.getElementById('correct-count').textContent = correct;
+            document.getElementById('wrong-count').textContent = wrong;
+
+            const pct = Math.round((totalAnswered / 40) * 100);
+            document.getElementById('progress-percent').textContent = `${pct}% Selesai`;
+            document.getElementById('progress-bar-fill').style.width = `${pct}%`;
+
+            document.getElementById('nav-btn-current-num').textContent = quizState.currentIndex + 1;
+
+            // Nav buttons disabled states
+            document.getElementById('btn-prev').disabled = quizState.currentIndex === 0;
+            document.getElementById('btn-next').disabled = quizState.currentIndex === questionsData.length - 1;
+        }
+
+        function renderCurrentQuestion() {
+            const q = questionsData[quizState.currentIndex];
+            const savedAns = quizState.answers[quizState.currentIndex];
+            const card = document.getElementById('question-card');
+
+            const typeBadge = q.type === 'direct' 
+                ? `<span class="bg-indigo-100 text-indigo-800 border border-indigo-200 text-xs font-bold px-3 py-1 rounded-full"><i class="fa-solid fa-calculator mr-1"></i> Soal Langsung</span>`
+                : `<span class="bg-pink-100 text-pink-800 border border-pink-200 text-xs font-bold px-3 py-1 rounded-full"><i class="fa-solid fa-book-open mr-1"></i> Soal Cerita Mandiri</span>`;
+
+            const optionLabels = ['A', 'B', 'C', 'D'];
+
+            let optionsHtml = '<div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 my-4">';
+
+            q.options.forEach((opt, idx) => {
+                let btnStyle = 'bg-white border-slate-200 hover:border-brand-purple hover:bg-purple-50/50 text-slate-700';
+                let iconHtml = `<span class="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 font-bold text-xs flex items-center justify-center shrink-0">${optionLabels[idx]}</span>`;
+
+                if (savedAns) {
+                    if (idx === q.correct) {
+                        btnStyle = 'bg-emerald-50 border-emerald-500 text-emerald-900 font-bold ring-2 ring-emerald-400';
+                        iconHtml = `<span class="w-7 h-7 rounded-lg bg-emerald-500 text-white font-bold text-xs flex items-center justify-center shrink-0"><i class="fa-solid fa-check"></i></span>`;
+                    } else if (idx === savedAns.selected) {
+                        btnStyle = 'bg-red-50 border-red-500 text-red-900 font-bold ring-2 ring-red-300';
+                        iconHtml = `<span class="w-7 h-7 rounded-lg bg-red-500 text-white font-bold text-xs flex items-center justify-center shrink-0"><i class="fa-solid fa-xmark"></i></span>`;
+                    } else {
+                        btnStyle = 'bg-slate-50 border-slate-200 text-slate-400 opacity-60';
+                    }
+                }
+
+                const clickAttr = savedAns ? '' : `onclick="selectOption(${idx})"`;
+
+                optionsHtml += `
+                    <button ${clickAttr} class="pop-card text-left p-4 rounded-2xl border-2 flex items-center gap-3 transition-all ${btnStyle}">
+                        ${iconHtml}
+                        <span class="text-sm font-semibold">${opt}</span>
+                    </button>
+                `;
+            });
+
+            optionsHtml += '</div>';
+
+            let explanationHtml = '';
+            if (savedAns) {
+                const statusBanner = savedAns.isCorrect
+                    ? `<div class="flex items-center gap-2 text-emerald-700 font-bold text-sm mb-1"><i class="fa-solid fa-circle-check text-lg"></i> Jawaban Kamu Benar!</div>`
+                    : `<div class="flex items-center gap-2 text-red-600 font-bold text-sm mb-1"><i class="fa-solid fa-circle-xmark text-lg"></i> Jawaban Kamu Belum Tepat.</div>`;
+
+                explanationHtml = `
+                    <div class="mt-4 p-4 rounded-2xl border ${savedAns.isCorrect ? 'bg-emerald-50/80 border-emerald-200' : 'bg-amber-50/80 border-amber-200'}">
+                        ${statusBanner}
+                        <p class="text-xs text-slate-700 leading-relaxed"><b class="text-slate-800">Pembahasan:</b> ${q.explanation}</p>
+                    </div>
+                `;
+            }
+
+            card.innerHTML = `
+                <div>
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-black text-brand-purple bg-purple-100 px-3 py-1 rounded-full">Soal #${q.id} dari 40</span>
+                            ${typeBadge}
+                        </div>
+                    </div>
+
+                    <h2 class="text-base md:text-lg font-bold text-slate-800 leading-snug mt-2 mb-4">
+                        ${q.question}
+                    </h2>
+
+                    ${optionsHtml}
+                </div>
+                ${explanationHtml}
+            `;
+
+            updateHeaderUI();
+        }
+
+        function selectOption(optIndex) {
+            if (quizState.answers[quizState.currentIndex]) return; // Already answered
+
+            const q = questionsData[quizState.currentIndex];
+            const isCorrect = (optIndex === q.correct);
+
+            quizState.answers[quizState.currentIndex] = {
+                selected: optIndex,
+                isCorrect: isCorrect
+            };
+
+            saveState();
+            renderCurrentQuestion();
+
+            // Trigger confetti if correct
+            if (isCorrect && typeof confetti === 'function') {
+                confetti({
+                    particleCount: 30,
+                    spread: 60,
+                    origin: { y: 0.8 }
+                });
+            }
+        }
+
+        function navigateQuestion(direction) {
+            const newIndex = quizState.currentIndex + direction;
+            if (newIndex >= 0 && newIndex < questionsData.length) {
+                quizState.currentIndex = newIndex;
+                saveState();
+                renderCurrentQuestion();
+            }
+        }
+
+        function jumpToQuestion(index) {
+            if (index >= 0 && index < questionsData.length) {
+                quizState.currentIndex = index;
+                saveState();
+                renderCurrentQuestion();
+                closeNavModal();
+            }
+        }
+
+        function openNavModal() {
+            const container = document.getElementById('modal-grid-container');
+            container.innerHTML = '';
+
+            questionsData.forEach((q, idx) => {
+                const ans = quizState.answers[idx];
+                let btnStyle = 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200';
+
+                if (ans) {
+                    if (ans.isCorrect) btnStyle = 'bg-emerald-500 hover:bg-emerald-600 text-white font-bold border-emerald-600';
+                    else btnStyle = 'bg-red-500 hover:bg-red-600 text-white font-bold border-red-600';
+                }
+
+                if (idx === quizState.currentIndex) {
+                    btnStyle += ' ring-4 ring-brand-purple ring-offset-1';
+                }
+
+                const btn = document.createElement('button');
+                btn.className = `h-11 rounded-xl border text-xs font-bold transition flex flex-col items-center justify-center ${btnStyle}`;
+                btn.onclick = () => jumpToQuestion(idx);
+                btn.innerHTML = `<span>${idx + 1}</span>`;
+                container.appendChild(btn);
+            });
+
+            document.getElementById('nav-modal').classList.remove('hidden');
+        }
+
+        function closeNavModal() {
+            document.getElementById('nav-modal').classList.add('hidden');
+        }
+
+        function finishQuizSummary() {
+            closeNavModal();
+            const { correct, wrong, score } = getQuizStats();
+
+            document.getElementById('final-score-val').textContent = score;
+            document.getElementById('final-correct-val').textContent = correct;
+            document.getElementById('final-wrong-val').textContent = wrong;
+
+            let msg = 'Luar biasa! Kamu sangat menguasai operasi desimal!';
+            if (score < 60) msg = 'Tetap semangat! Mari kita pelajari kembali materi operasi desimal.';
+            else if (score < 85) msg = 'Kerja bagus! Sedikit latihan lagi kamu pasti bisa sempurna!';
+
+            document.getElementById('final-feedback-msg').textContent = msg;
+
+            document.getElementById('result-modal').classList.remove('hidden');
+
+            if (score >= 70 && typeof confetti === 'function') {
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+
+        function closeResultModal() {
+            document.getElementById('result-modal').classList.add('hidden');
+        }
+
+        // RESET CONFIRMATION DIALOG (No alert/confirm)
+        function openConfirmModal() {
+            document.getElementById('confirm-modal').classList.remove('hidden');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirm-modal').classList.add('hidden');
+        }
+
+        function confirmResetAction() {
+            closeConfirmModal();
+            closeResultModal();
+            localStorage.removeItem(STORAGE_KEY);
+            quizState = {
+                currentIndex: 0,
+                answers: {},
+                isFinished: false
+            };
+            saveState();
+            renderCurrentQuestion();
+        }
+
+        window.onload = function () {
+            loadSavedState();
+            renderCurrentQuestion();
+        };
+    </script>
+</body>
+</html>
